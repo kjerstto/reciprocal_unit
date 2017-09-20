@@ -1,9 +1,9 @@
 import struct
 import numpy as np
 
-INTERVALS = 16
+INTERVALS = 8
 interval_len = 1/INTERVALS
-print(INTERVALS)
+#print("Intervals: ", INTERVALS)
 
 def as_int(a):
     return np.uint32(np.uint32(struct.unpack('<l', struct.pack('<f', a))[0]))
@@ -13,9 +13,9 @@ def table_gen_sqrt():
 
 	#Calculate coefficients for each interval using Gregory Forward algorithm
 	for i in range(0, INTERVALS):
-		xi = 1 + (i * interval_len)
-		xip1 = xi + interval_len
-		xm = (xip1+xi)/2
+		xi = 1 + (i * interval_len) #Beginning of interval
+		xip1 = xi + interval_len	#End of interval
+		xm = (xip1+xi)/2			#Midpoint of interval
 		
 		k = xm - xi
 		
@@ -25,10 +25,10 @@ def table_gen_sqrt():
 		
 		a_interm = yip1 - 2*ym + yi
 		b_interm = yip1 - yi
-		
-		k2 = 2*k
-		ksq2 = 2*k*k
-		ksq = k * k
+			
+		k2 = 2*k 		# 2*k
+		ksq2 = 2*k*k 	# 2*k^2
+		ksq = k * k 	# k^2
 		
 		xmsq = xm * xm
 		

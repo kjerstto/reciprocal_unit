@@ -15,7 +15,7 @@ def as_int(a):
 #Generate table
 table_sqrt = table_gen_sqrt() #Table containing coefficients
 	
-def fp32_sqrt(a):
+def fp32_invsqrt(a):
 	a_int = as_int(a)
 	a_sgn = a_int >> 31 #Must be 0 for sqrt calculation
 	a_exp = (a_int >> 23) & 0xff #Exponent as int
@@ -42,30 +42,16 @@ def fp32_sqrt(a):
 		iterations = iterations + 1
 		#print ("Iteration " + str(iterations) + " Approximated answer= " + str(approx))
 		
-	# #---TEST---
-	# if (np.mod(exp, 2) == 0):
-		# exp1 = -exp / 2
-		# final_approx1 = approx * np.float32(np.power(2, exp1))
-	# elif (np.mod(exp, 2) == 1):
-		# exp1 = (exp - 1) / -2
-		# final_approx1 = (approx * np.float32(1/np.sqrt(2))) * np.float32(np.power(2,exp1))
-	# #---END TEST---
-
-	approx = approx * a_e0_value #Make inverse sqrt into sqrt
-
 	#Multiply with exponent
 	if (np.mod(exp, 2) == 0):
-		exp = exp / 2
+		exp = -exp / 2
 		final_approx = approx * np.float32(np.power(2, exp))
 	elif (np.mod(exp, 2) == 1):
-		exp = (exp - 1) / 2
-		final_approx = (approx * np.float32(np.sqrt(2))) * np.float32(np.power(2,exp))
+		exp = (exp - 1) / -2
+		final_approx = (approx * np.float32(1/np.sqrt(2))) * np.float32(np.power(2,exp))
 		
-	# print("x = ", a)	
-	# print("1/sqrt(x) = ", final_approx1)
-	# print("Correct:    ", 1/np.sqrt(a))	
-	# print("Sqrt(x) = ", final_approx)
-	# print("Correct:  ", np.sqrt(a))
+	print(final_approx)
+	print(1/np.sqrt(a))
 	
 	#return final_approx
 	return as_float(as_int(final_approx))
