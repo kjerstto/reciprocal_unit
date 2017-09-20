@@ -1,0 +1,65 @@
+import struct
+import numpy as np
+import random
+from table_gen import table_gen_sqrt
+
+NR_ITERATIONS = 1
+
+def as_float(a):
+    return struct.unpack('<f', struct.pack('<l', np.int32(a)))[0]
+
+def as_int(a):
+    return np.uint32(np.uint32(struct.unpack('<l', struct.pack('<f', a))[0]))
+
+#Generate table
+table_sqrt = table_gen_sqrt() #Table containing coefficients
+	
+def fp32_sqrt(a):
+	a_int = as_int(a)
+	a_sgn = a_int >> 31 #Must be 0 for sqrt calculation
+	a_exp = (a_int >> 23) & 0xff #Exponent as int
+	a_sfc_enc = a_int & 0x7fffff #Mantissa as int
+	a_e0_value = (a_int | 0x3f800000) & 0x3fffffff #a with exponent 0 (1.Mantissa)
+	a_e0_value = np.float32(as_float(a_e0_value)) #1.Mantiassa for use in calculations
+
+	#Find interval. For 16 intervals
+	group = (a_int >> 19) & 0xf
+	
+	#Perform initial approximation
+	approx = initial_approx(table_sqrt[group], a_e0_value)
+	exp = a_exp - 127
+	print(approx)
+	
+	
+	#Perform newton_raphson.
+	iterations = 0
+	while (iterations < NR_ITERATIONS):
+		approx = newton_raphson(approx, a_e0_value)
+		iterations = iterations + 1
+		#print ("Iteration " + str(iterations) + " Approximated answer= " + str(approx))
+	approx = approx * a_e0_value #Make inverse sqrt into sqrt
+	#Multiply with exponent
+	if (np.mod(exp, 2) == 0):
+		exp = exp / 2
+		final_approx = approx * np.float32(np.power(2, exp))
+	elif (np.mod(exp, 2) == 1):
+		exp = (exp - 1) / 2
+		final_approx = (approx * np.float32(np.sqrt(2))) * np.float32(np.power(2,exp))
+		
+	print("Final approximation= " + str(final_approx))
+	return final_approx
+	
+def initial_approx(table, value):
+	#table = [a, b, c]
+	ca = table[0]
+	cb = table[1]
+	cc = table[2]
+	approx = np.float32(ca*value*value + cb*value + cc)
+	return approx
+	
+def newton_raphson(approx, value):
+	new_approx = np.float32((approx/2))*np.float32((3-(value*(approx*approx))))
+	return new_approx
+	
+	
+fp32_sqrt(4)	
