@@ -1,7 +1,7 @@
 import struct
 import numpy as np
 import random
-from table_gen import table_gen_sqrt
+from fpu.table_gen import table_gen_sqrt
 
 NR_ITERATIONS = 1
 #print("Newton-Raphson iterations: ", NR_ITERATIONS)
@@ -41,15 +41,6 @@ def fp32_sqrt(a):
 		approx = newton_raphson(approx, a_e0_value)
 		iterations = iterations + 1
 		#print ("Iteration " + str(iterations) + " Approximated answer= " + str(approx))
-		
-	# #---TEST---
-	# if (np.mod(exp, 2) == 0):
-		# exp1 = -exp / 2
-		# final_approx1 = approx * np.float32(np.power(2, exp1))
-	# elif (np.mod(exp, 2) == 1):
-		# exp1 = (exp - 1) / -2
-		# final_approx1 = (approx * np.float32(1/np.sqrt(2))) * np.float32(np.power(2,exp1))
-	# #---END TEST---
 
 	approx = approx * a_e0_value #Make inverse sqrt into sqrt
 
@@ -61,11 +52,6 @@ def fp32_sqrt(a):
 		exp = (exp - 1) / 2
 		final_approx = (approx * np.float32(np.sqrt(2))) * np.float32(np.power(2,exp))
 		
-	# print("x = ", a)	
-	# print("1/sqrt(x) = ", final_approx1)
-	# print("Correct:    ", 1/np.sqrt(a))	
-	# print("Sqrt(x) = ", final_approx)
-	# print("Correct:  ", np.sqrt(a))
 	
 	#return final_approx
 	return as_float(as_int(final_approx))
@@ -84,4 +70,3 @@ def newton_raphson(approx, value):
 	return new_approx
 	
 	
-fp32_sqrt(63.234532)	

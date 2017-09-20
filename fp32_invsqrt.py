@@ -1,7 +1,7 @@
 import struct
 import numpy as np
 import random
-from table_gen import table_gen_sqrt
+from fpu.table_gen import table_gen_sqrt
 
 NR_ITERATIONS = 1
 #print("Newton-Raphson iterations: ", NR_ITERATIONS)
@@ -49,9 +49,6 @@ def fp32_invsqrt(a):
 	elif (np.mod(exp, 2) == 1):
 		exp = (exp - 1) / -2
 		final_approx = (approx * np.float32(1/np.sqrt(2))) * np.float32(np.power(2,exp))
-		
-	print(final_approx)
-	print(1/np.sqrt(a))
 	
 	#return final_approx
 	return as_float(as_int(final_approx))
@@ -69,5 +66,3 @@ def newton_raphson(approx, value):
 	new_approx = np.float32((approx/2))*np.float32((3-(value*(approx*approx))))
 	return new_approx
 	
-	
-fp32_sqrt(63.234532)	
